@@ -19,7 +19,7 @@ class $modify(CCMotionStreak) {
         }
 
         auto player = static_cast<PlayerObject*>(parent);
-        if (!player->m_regularTrail || !player->m_regularTrail->isVisible()) {
+        if (!player->m_regularTrail) {
             CCMotionStreak::update(delta);
             return;
         }
@@ -29,13 +29,18 @@ class $modify(CCMotionStreak) {
         if (m_fields->elapsedTime >= m_fields->cutInterval) {
             m_fields->elapsedTime -= m_fields->cutInterval;
 
-            if (m_fields->isCutting) {
-                this->stopStroke();
-            } else {
-                this->resumeStroke();
-            }
+            // Perform cutting logic only when the trail is visible
+            if (player->m_regularTrail->isVisible()) {
+                if (m_fields->isCutting) {
+                    Mod::get()->logInfo("Stopping trail stroke");
+                    this->stopStroke();
+                } else {
+                    Mod::get()->logInfo("Resuming trail stroke");
+                    this->resumeStroke();
+                }
 
-            m_fields->isCutting = !m_fields->isCutting;
+                m_fields->isCutting = !m_fields->isCutting;
+            }
         }
 
         CCMotionStreak::update(delta);
