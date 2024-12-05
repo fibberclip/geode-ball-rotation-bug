@@ -32,10 +32,8 @@ class $modify(CCMotionStreak) {
             // Perform cutting logic only when the trail is visible
             if (player->m_regularTrail->isVisible()) {
                 if (m_fields->isCutting) {
-                    Mod::get()->logInfo("Stopping trail stroke");
                     this->stopStroke();
                 } else {
-                    Mod::get()->logInfo("Resuming trail stroke");
                     this->resumeStroke();
                 }
 
