@@ -1,33 +1,34 @@
 #include <Geode/Geode.hpp>
 #include <Geode/modify/CCMotionStreak.hpp>
-#include <random>
+#include <Geode/console.hpp>
 
 using namespace geode::prelude;
 
 class $modify (CCMotionStreak)
 {
+    // Timer to track elapsed time
+    float timer = 0.0f;
+    const float cutInterval = 0.4f;  // Set the time interval (0.4 seconds, can be adjusted)
+
     virtual void update(float delta)
     {
-        // Generate a random number to simulate the bug happening with a certain frequency
-        static std::random_device rd;
-        static std::mt19937 gen(rd());
-        static std::uniform_int_distribution<> dis(0, 100); // Frequency range (0-100%)
+        // Increment the timer with each frame
+        timer += delta;
 
-        int randChance = dis(gen);
-        
-        // Customizable chance for the bug to happen (75% here as per your request)
-        bool isCutting = randChance < 95;
+        // Check if the interval has passed
+        if (timer >= cutInterval) {
+            // Reset the timer and cut the trail
+            timer = 0.0f;
 
-        // Adjust the speed of the trail to create the cutting effect
-        if (isCutting) {
-            // Stop the trail from emitting new segments by setting speed to 0
-            this->stopStroke(); // no new trail segments
-        } else {
-            // Resume normal trail behavior by restoring speed
-            this->resumeStroke(); // or any value you want for normal speed
+            // Toggle the trail state (stop or resume)
+            if (this->isStrokeActive()) {
+                this->stopStroke(); // Stop the trail
+            } else {
+                this->resumeStroke(); // Resume the trail
+            }
         }
 
-        // Update the trail's behavior, applying the delta time, which controls its appearance
+        // Update the trail's behavior, applying the delta time
         CCMotionStreak::update(delta);
     }
 };
