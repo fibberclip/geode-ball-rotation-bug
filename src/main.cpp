@@ -11,7 +11,7 @@ class $modify(PlayerObject) {
         static std::uniform_real_distribution<float> dist(0.0f, 1.0f);
 
         auto setting = Mod::get()->getSetting("skip_probability");
-        float skipProbability = setting->asFloat(); // Correct way to access the setting value
+        float skipProbability = setting->getValue<float>(); // Correctly retrieve the float value
 
         // Randomly skip trail updates
         if (dist(rng) < skipProbability) {
