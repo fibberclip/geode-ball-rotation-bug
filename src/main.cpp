@@ -15,11 +15,11 @@ class $modify (CCMotionStreak)
     {
         m_fields->elapsedTime += delta;
 
-        if (m_bStartingPositionInitialized && m_fields->elapsedTime >= m_fields->cutInterval) {
+        if (m_fields->elapsedTime >= m_fields->cutInterval) {
             m_fields->elapsedTime -= m_fields->cutInterval; // Reset the timer
 
             // Toggle cutting state
-            if (m_fields->isCutting) {
+            if (m_bStartingPositionInitialized && m_fields->isCutting) {
                 this->stopStroke(); // Resumes the trail
             } else {
                 this->resumeStroke(); // Stops the trail for a bit
