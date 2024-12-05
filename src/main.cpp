@@ -7,7 +7,7 @@ class $modify (CCMotionStreak)
 {
     struct Fields {
         float elapsedTime = 0.0f;    // Tracks the elapsed time
-        float cutInterval = 0.4f;    // Interval for the trail cutting (default: 0.4s)
+        float cutInterval = 0.2f;    // Interval for the trail cutting (default: 0.4s)
         bool isCutting = false;      // Indicates whether the trail is currently being cut
     };
 
