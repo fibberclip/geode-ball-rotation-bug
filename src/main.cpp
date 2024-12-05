@@ -15,8 +15,8 @@ class $modify(CCMotionStreak)
         // Update elapsed time
         m_fields->elapsedTime += delta;
 
-        // Check if the trail has active points before proceeding
-        if (!this->getPoints()->empty()) {
+        // Check if the trail is currently active
+        if (m_uNuPoints > 0 && m_bStroke) {
             if (m_fields->elapsedTime >= m_fields->cutInterval) {
                 m_fields->elapsedTime -= m_fields->cutInterval; // Reset the timer
 
