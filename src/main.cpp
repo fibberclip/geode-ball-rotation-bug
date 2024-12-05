@@ -1,19 +1,25 @@
-#include <Geode/Geode.hpp>
-#include <Geode/modify/PlayerObject.hpp>
+#include <Geode/Bindings.hpp>
+#include <Geode/Modify.hpp>
+#include <random>
 
 using namespace geode::prelude;
 
-class $modify (PlayerObject)
-{
-    void switchedToMode(GameObjectType p0)
-    {
-        auto ball = m_isBall;
-
-        PlayerObject::switchedToMode(p0);
-
-        if (ball && !m_isBall)
-        {
-            this->runAction(CCEaseOut::create(CCRotateBy::create(0.5f, 360 - this->getRotation()), 2));
+class $modify(PlayerTrail) {
+    void updateTrail() {
+        static std::random_device rd;
+        static std::mt19937 rng(rd());
+        static std::uniform_real_distribution<float> dist(0.0f, 1.0f);
+        
+        float skipProbability = Mod::get()->getSetting<float>("skip_probability").value_or(0.1f);
+        
+        if (dist(rng) < skipProbability) {
+            return; // Skip this frame's trail update
         }
+
+        PlayerTrail::updateTrail(); // Call original logic
     }
 };
+
+$execute {
+    Mod::get()->addSetting("skip_probability", 0.1f); // Default frequency
+}
