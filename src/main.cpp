@@ -17,7 +17,7 @@ class $modify(CCMotionStreak) {
     };
 
     virtual void update(float delta) {
-        // Check if this streak is active using the m_bStroke field
+        // Check if the trail is active using m_bStroke
         if (!m_bStroke) {
             CCMotionStreak::update(delta); // Default behavior
             return;
@@ -42,21 +42,31 @@ class $modify(CCMotionStreak) {
     }
 };
 
-// Hook into PlayerObject to initialize/reset streaks
+// Hook into PlayerObject to activate/reset trails
 class $modify(PlayerObject) {
     void activateStreak() {
-        auto streak = this->getMotionStreak(); // Obtain streak (if available)
-        if (streak) {
-            trailStates[streak] = true; // Mark trail as active
+        // Handle m_regularTrail
+        if (m_regularTrail) {
+            trailStates[m_regularTrail] = true; // Mark trail as active
+        }
+
+        // Handle m_shipStreak (if applicable)
+        if (m_shipStreak) {
+            trailStates[m_shipStreak] = true; // Mark trail as active
         }
 
         PlayerObject::activateStreak(); // Call original
     }
 
     void resetStreak() {
-        auto streak = this->getMotionStreak(); // Obtain streak (if available)
-        if (streak) {
-            trailStates[streak] = false; // Mark trail as inactive
+        // Handle m_regularTrail
+        if (m_regularTrail) {
+            trailStates[m_regularTrail] = false; // Mark trail as inactive
+        }
+
+        // Handle m_shipStreak (if applicable)
+        if (m_shipStreak) {
+            trailStates[m_shipStreak] = false; // Mark trail as inactive
         }
 
         PlayerObject::resetStreak(); // Call original
