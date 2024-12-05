@@ -4,22 +4,19 @@
 
 using namespace geode::prelude;
 
-class $modify(PlayerTrail) {
-    void updateTrail() {
+class $modify(PlayerObject) {
+    void update(float delta) {
         static std::random_device rd;
         static std::mt19937 rng(rd());
         static std::uniform_real_distribution<float> dist(0.0f, 1.0f);
-        
+
         float skipProbability = Mod::get()->getSetting("skip_probability")->getValue<float>();
-        
+
+        // Randomly skip trail updates
         if (dist(rng) < skipProbability) {
-            return; // Skip this frame's trail update
+            return; // Skip trail updates for this frame
         }
 
-        PlayerTrail::updateTrail(); // Call original logic
+        PlayerObject::update(delta); // Call the original update logic
     }
 };
-
-$execute {
-    Mod::get()->addSetting("skip_probability", 0.1f); // Default frequency
-}
