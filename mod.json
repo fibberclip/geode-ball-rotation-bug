@@ -2,11 +2,10 @@
   "geode": "4.0.1",
   "gd": {"android": "2.2074", "win": "2.2074"},
   "version": "v1.0.0",
-  "id": "saritahhh.ball_bug",
-  "name": "Standalone Ball Rotation Bug",
+  "id": "saritahhh.trailcut",
+  "name": "Trail Cutting",
   "developer": "Saritahhh",
-  "description": "Standalone QOLMod Ball rotation bug for personal uses !!",
+  "description": "GD if it was good",
   "repository": "https://github.com/fibberclip/geode-ball-rotation-bug",
-  "resources": {"files": ["resources/examples/epicexample.png"]},
   "tags": ["offline", "gameplay", "customization"]
 }
