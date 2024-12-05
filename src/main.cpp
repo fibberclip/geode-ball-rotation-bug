@@ -5,25 +5,30 @@ using namespace geode::prelude;
 
 class $modify (CCMotionStreak)
 {
-    float elapsedTime = 0.0f;    // Tracks the elapsed time
-    float cutInterval = 0.4f;    // Interval for the trail cutting (default: 0.4s)
-    bool isCutting = false;      // Indicates whether the trail is currently being cut
+    // Define a struct for custom fields
+    struct Fields {
+        float elapsedTime = 0.0f;    // Tracks the elapsed time
+        float cutInterval = 0.4f;    // Interval for the trail cutting (default: 0.4s)
+        bool isCutting = false;      // Indicates whether the trail is currently being cut
+    };
 
     virtual void update(float delta)
     {
-        elapsedTime += delta;
+        auto& fields = geode::getModFields<Fields>(this); // Access custom fields
 
-        if (elapsedTime >= cutInterval) {
-            elapsedTime -= cutInterval; // Reset the timer
+        fields.elapsedTime += delta;
+
+        if (fields.elapsedTime >= fields.cutInterval) {
+            fields.elapsedTime -= fields.cutInterval; // Reset the timer
 
             // Toggle cutting state
-            if (isCutting) {
+            if (fields.isCutting) {
                 this->resumeStroke(); // Resumes the trail
             } else {
                 this->stopStroke(); // Stops the trail for a bit
             }
 
-            isCutting = !isCutting; // Flip the state
+            fields.isCutting = !fields.isCutting; // Flip the state
         }
 
         // Update the trail's behavior, applying the delta time
