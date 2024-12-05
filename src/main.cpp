@@ -3,7 +3,7 @@
 
 using namespace geode::prelude;
 
-class $modify (CCMotionStreak)
+class $modify(CCMotionStreak)
 {
     struct Fields {
         float elapsedTime = 0.0f;    // Tracks the elapsed time
@@ -12,27 +12,26 @@ class $modify (CCMotionStreak)
     };
 
     virtual void update(float delta) {
+        // Update elapsed time
         m_fields->elapsedTime += delta;
 
-        // Check if the trail is currently being drawn
-        if (this->isDrawing() && m_fields->elapsedTime >= m_fields->cutInterval) {
-            m_fields->elapsedTime -= m_fields->cutInterval; // Reset the timer
+        // Check if the trail is currently active
+        if (m_bStroke) {
+            if (m_fields->elapsedTime >= m_fields->cutInterval) {
+                m_fields->elapsedTime -= m_fields->cutInterval; // Reset the timer
 
-            // Toggle cutting state
-            m_fields->isCutting = !m_fields->isCutting; // Flip the state
+                // Toggle cutting state
+                if (m_fields->isCutting) {
+                    this->stopStroke(); // Resume the trail
+                } else {
+                    this->resumeStroke(); // Stop the trail temporarily
+                }
 
-            if (m_fields->isCutting) {
-                this->resumeStroke(); // Stop adding new points temporarily
-            } else {
-                this->stopStroke(); // Resume adding points
+                m_fields->isCutting = !m_fields->isCutting; // Flip the state
             }
         }
 
-        // Update the trail's behavior, applying the delta time
+        // Call the original update method to ensure normal behavior
         CCMotionStreak::update(delta);
-    }
-
-    bool isDrawing() {
-        return m_bStroke && m_uNuPoints > 5; // Check if stroke is active and points exist
     }
 };
