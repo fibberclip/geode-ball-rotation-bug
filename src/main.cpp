@@ -13,8 +13,6 @@ class $modify (CCMotionStreak)
 
     virtual void update(float delta)
     {
-        if (!m_fields) return; // Safeguard against uninitialized fields (ensure they're initialized correctly)
-
         m_fields->elapsedTime += delta;
 
         if (m_fields->elapsedTime >= m_fields->cutInterval) {
