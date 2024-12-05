@@ -14,7 +14,7 @@ class $modify (CCMotionStreak)
         static std::uniform_int_distribution<> dis(0, 100); // Frequency range (0-100%)
 
         int randChance = dis(gen);
-        if (randChance < 5) {  // 5% chance for bug to occur (can adjust for frequency)
+        if (randChance < 75) {  // 5% chance for bug to occur (can adjust for frequency)
             // Apply a "cut" effect, simulating the bug (e.g., stop rendering the trail for a short time)
             this->setVisible(false);
         } else {
