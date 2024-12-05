@@ -7,17 +7,16 @@ class $modify(CCMotionStreak)
 {
     struct Fields {
         float elapsedTime = 0.0f;    // Tracks the elapsed time
-        float cutInterval = 0.2f;    // Interval for the trail cutting (default: 0.2s)
+        float cutInterval = 0.2f;    // Interval for the trail cutting
         bool isCutting = false;      // Indicates whether the trail is currently being cut
     };
 
     virtual void update(float delta) {
-        // Call the base update first to ensure proper behavior
+        // Call the base update first to maintain trail behavior
         CCMotionStreak::update(delta);
 
-        // Check if the trail is currently active
+        // Ensure the trail is active before applying logic
         if (m_uNuPoints > 0 && m_bStroke) {
-            // Update elapsed time
             m_fields->elapsedTime += delta;
 
             if (m_fields->elapsedTime >= m_fields->cutInterval) {
@@ -27,17 +26,29 @@ class $modify(CCMotionStreak)
                 if (m_fields->isCutting) {
                     this->resumeStroke(); // Resume the trail
                 } else {
-                    this->stopStroke(); // Stop the trail temporarily
+                    this->stopStroke();   // Temporarily stop the trail
                 }
 
                 m_fields->isCutting = !m_fields->isCutting; // Flip the state
+
+                // Debugging: Log the current state
+                CCLOG("Trail Cutting: %s", m_fields->isCutting ? "OFF" : "ON");
             }
         } else {
-            // Reset cutting state if trail isn't active
+            // Reset cutting state if trail is inactive
             if (m_fields->isCutting) {
                 this->resumeStroke();
                 m_fields->isCutting = false;
             }
         }
+    }
+
+    // Restore fade-out by overriding draw method if needed
+    virtual void draw() override {
+        // Call original draw method
+        CCMotionStreak::draw();
+
+        // If necessary, modify draw logic to restore fading
+        // This depends on how the fade is handled internally
     }
 };
