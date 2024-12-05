@@ -10,7 +10,7 @@ class $modify(PlayerTrail) {
         static std::mt19937 rng(rd());
         static std::uniform_real_distribution<float> dist(0.0f, 1.0f);
         
-        float skipProbability = Mod::get()->getSetting<float>("skip_probability").value_or(0.1f);
+        float skipProbability = Mod::get()->getSetting("skip_probability")->getValue<float>();
         
         if (dist(rng) < skipProbability) {
             return; // Skip this frame's trail update
