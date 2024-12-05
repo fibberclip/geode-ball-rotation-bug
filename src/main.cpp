@@ -11,7 +11,7 @@ class $modify(CCMotionStreak)
         bool isCutting = false;      // Indicates whether cutting is active
     };
 
-    virtual void update(float delta) {
+    virtual void update(float delta) override {
         // Call base class update to ensure normal trail functionality
         CCMotionStreak::update(delta);
 
@@ -24,9 +24,9 @@ class $modify(CCMotionStreak)
 
                 // Toggle cutting without disrupting internal rendering states
                 if (m_fields->isCutting) {
-                    m_pPointState = 1.0f; // Allow points to render normally
+                    *m_pPointState = 1.0f; // Allow points to render normally
                 } else {
-                    m_pPointState = 0.0f; // Hide points temporarily
+                    *m_pPointState = 0.0f; // Hide points temporarily
                 }
 
                 m_fields->isCutting = !m_fields->isCutting; // Flip cutting state
@@ -38,7 +38,7 @@ class $modify(CCMotionStreak)
         } else {
             // Reset cutting state when trail is inactive
             if (m_fields->isCutting) {
-                m_pPointState = 1.0f; // Ensure points render normally
+                *m_pPointState = 1.0f; // Ensure points render normally
                 m_fields->isCutting = false;
             }
         }
@@ -47,7 +47,7 @@ class $modify(CCMotionStreak)
     virtual void draw() override {
         // Debugging: Log internal state
         CCLOG("Draw Call - Stroke: %d, NuPoints: %u, PointState: %f", 
-            m_bStroke, m_uNuPoints, m_pPointState);
+            m_bStroke, m_uNuPoints, *m_pPointState);
 
         // Call base draw method to ensure fade effect remains
         CCMotionStreak::draw();
