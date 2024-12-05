@@ -13,22 +13,21 @@ class $modify (CCMotionStreak)
 
     virtual void update(float delta)
     {
-        // Access the custom fields
-        auto fields = m_fields;
+        if (!m_fields) return; // Safeguard against uninitialized fields (ensure they're initialized correctly)
 
-        fields->elapsedTime += delta;
+        m_fields->elapsedTime += delta;
 
-        if (fields->elapsedTime >= fields->cutInterval) {
-            fields->elapsedTime -= fields->cutInterval; // Reset the timer
+        if (m_fields->elapsedTime >= m_fields->cutInterval) {
+            m_fields->elapsedTime -= m_fields->cutInterval; // Reset the timer
 
             // Toggle cutting state
-            if (fields->isCutting) {
+            if (m_fields->isCutting) {
                 this->resumeStroke(); // Resumes the trail
             } else {
                 this->stopStroke(); // Stops the trail for a bit
             }
 
-            fields->isCutting = !fields->isCutting; // Flip the state
+            m_fields->isCutting = !m_fields->isCutting; // Flip the state
         }
 
         // Update the trail's behavior, applying the delta time
