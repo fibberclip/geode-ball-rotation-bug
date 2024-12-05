@@ -4,28 +4,27 @@
 
 using namespace geode::prelude;
 
+float elapsedTime = 0.0f;
+float cutInterval = 0.2f;
+bool isCutting = false;
+bool streakActive = false; // New flag to track streak state
+
 class $modify(CCMotionStreak) {
-    struct Fields {
-        float elapsedTime = 0.0f;
-        float cutInterval = 0.2f;
-        bool isCutting = false;
-        bool streakActive = false; // New flag to track streak state
-    };
 
     virtual void update(float delta) {
-        if (m_fields->streakActive) { // Only apply cutting logic when streak is active
-            m_fields->elapsedTime += delta;
+        if (streakActive) { // Only apply cutting logic when streak is active
+            elapsedTime += delta;
 
-            if (m_fields->elapsedTime >= m_fields->cutInterval) {
-                m_fields->elapsedTime -= m_fields->cutInterval;
+            if (elapsedTime >= cutInterval) {
+                elapsedTime -= cutInterval;
 
-                if (m_fields->isCutting) {
+                if (isCutting) {
                     this->stopStroke();
                 } else {
                     this->resumeStroke();
                 }
 
-                m_fields->isCutting = !m_fields->isCutting;
+                isCutting = !isCutting;
             }
         }
 
@@ -40,7 +39,7 @@ class $modify(PlayerObject) {
         if (m_regularTrail) {
             auto streak = reinterpret_cast<CCMotionStreak*>(m_regularTrail);
             if (streak) {
-                streak->m_fields->streakActive = true; // Enable cutting logic
+                streak->streakActive = true; // Enable cutting logic
             }
         }
     }
@@ -51,7 +50,7 @@ class $modify(PlayerObject) {
         if (m_regularTrail) {
             auto streak = reinterpret_cast<CCMotionStreak*>(m_regularTrail);
             if (streak) {
-                streak->m_fields->streakActive = false; // Disable cutting logic
+                streak->streakActive = false; // Disable cutting logic
             }
         }
     }
