@@ -15,7 +15,7 @@ class $modify (CCMotionStreak)
 
     virtual void update(float delta)
     {
-        if (m_fields->trailActive) {
+        if (this->m_bStroke) { // Check if the trail exists (is active)
             m_fields->elapsedTime += delta;
 
             if (m_fields->elapsedTime >= m_fields->cutInterval) {
@@ -45,7 +45,7 @@ class $modify (PlayerObject)
     {
         PlayerObject::activateStreak(); // Call original method
         if (m_fields->m_streak) {
-            m_fields->m_streak->m_fields->trailActive = true; // Enable cutting effect
+            m_fields->m_streak->trailActive = true; // Enable cutting effect directly
         }
     }
 
@@ -53,7 +53,7 @@ class $modify (PlayerObject)
     {
         PlayerObject::resetStreak(); // Call original method
         if (m_fields->m_streak) {
-            m_fields->m_streak->m_fields->trailActive = false; // Disable cutting effect
+            m_fields->m_streak->trailActive = false; // Disable cutting effect directly
         }
     }
 };
