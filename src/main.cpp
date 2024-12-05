@@ -12,26 +12,32 @@ class $modify(CCMotionStreak)
     };
 
     virtual void update(float delta) {
-        // Update elapsed time
-        m_fields->elapsedTime += delta;
+        // Call the base update first to ensure proper behavior
+        CCMotionStreak::update(delta);
 
         // Check if the trail is currently active
         if (m_uNuPoints > 0 && m_bStroke) {
+            // Update elapsed time
+            m_fields->elapsedTime += delta;
+
             if (m_fields->elapsedTime >= m_fields->cutInterval) {
                 m_fields->elapsedTime -= m_fields->cutInterval; // Reset the timer
 
                 // Toggle cutting state
                 if (m_fields->isCutting) {
-                    this->stopStroke(); // Resume the trail
+                    this->resumeStroke(); // Resume the trail
                 } else {
-                    this->resumeStroke(); // Stop the trail temporarily
+                    this->stopStroke(); // Stop the trail temporarily
                 }
 
                 m_fields->isCutting = !m_fields->isCutting; // Flip the state
             }
+        } else {
+            // Reset cutting state if trail isn't active
+            if (m_fields->isCutting) {
+                this->resumeStroke();
+                m_fields->isCutting = false;
+            }
         }
-
-        // Call the original update method to ensure normal behavior
-        CCMotionStreak::update(delta);
     }
 };
