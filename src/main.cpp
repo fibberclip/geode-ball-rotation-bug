@@ -16,7 +16,7 @@ class $modify (CCMotionStreak)
         int randChance = dis(gen);
         
         // Customizable chance for the bug to happen (75% here as per your request)
-        bool isCutting = randChance < 35;
+        bool isCutting = randChance < 95;
 
         // Adjust the speed of the trail to create the cutting effect
         if (isCutting) {
