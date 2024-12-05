@@ -1,74 +1,32 @@
 #include <Geode/Geode.hpp>
 #include <Geode/modify/CCMotionStreak.hpp>
-#include <Geode/modify/PlayerObject.hpp>
 
 using namespace geode::prelude;
 
-// Hook into CCMotionStreak to apply the cutting effect
-class $modify(CCMotionStreak) {
+class $modify (CCMotionStreak)
+{
     struct Fields {
-        float elapsedTime = 0.0f;    // Tracks the elapsed time
-        float cutInterval = 0.2f;    // Interval for cutting
-        bool isCutting = false;      // Indicates if the trail is currently hidden
+        float elapsedTime = 0.0f;
+        float cutInterval = 0.15f;
+        bool isCutting = false;
     };
 
-    virtual void update(float delta) {
-        // Check if the trail is active using m_bStroke
-        if (!m_bStroke) {
-            CCMotionStreak::update(delta); // Default behavior
-            return;
-        }
+    virtual void update(float delta)
+    {
+        m_fields->elapsedTime += delta;
 
-        // Apply the cutting effect
-        this->m_fields.elapsedTime += delta;  // Accessing directly without `m_fields`
+        if (m_fields->elapsedTime >= m_fields->cutInterval) {
+            m_fields->elapsedTime -= m_fields->cutInterval; 
 
-        if (this->m_fields.elapsedTime >= this->m_fields.cutInterval) {
-            this->m_fields.elapsedTime -= this->m_fields.cutInterval;
-
-            if (this->m_fields.isCutting) {
-                this->resumeStroke(); // Resume the trail
+            if (m_fields->isCutting) {
+                this->stopStroke(); 
             } else {
-                this->stopStroke(); // Temporarily cut the trail
+                this->resumeStroke(); 
             }
 
-            this->m_fields.isCutting = !this->m_fields.isCutting; // Toggle cutting state
+            m_fields->isCutting = !m_fields->isCutting; 
         }
 
-        CCMotionStreak::update(delta); // Default behavior
-    }
-};
-
-// Hook into PlayerObject to ensure trails work as expected
-class $modify(PlayerObject) {
-    void activateStreak() {
-        if (m_regularTrail) {
-            m_regularTrail->m_bStroke = true; // Ensure trail is active
-            m_regularTrail->m_fields.elapsedTime = 0.0f; // Reset cutting timer
-            m_regularTrail->m_fields.isCutting = false;  // Ensure trail starts visible
-        }
-
-        if (m_shipStreak) {
-            m_shipStreak->m_bStroke = true; // Ensure trail is active
-            m_shipStreak->m_fields.elapsedTime = 0.0f; // Reset cutting timer
-            m_shipStreak->m_fields.isCutting = false;  // Ensure trail starts visible
-        }
-
-        PlayerObject::activateStreak(); // Call original
-    }
-
-    void resetStreak() {
-        if (m_regularTrail) {
-            m_regularTrail->m_bStroke = false; // Deactivate trail
-            m_regularTrail->m_fields.elapsedTime = 0.0f; // Reset cutting timer
-            m_regularTrail->m_fields.isCutting = false;  // Reset to visible state
-        }
-
-        if (m_shipStreak) {
-            m_shipStreak->m_bStroke = false; // Deactivate trail
-            m_shipStreak->m_fields.elapsedTime = 0.0f; // Reset cutting timer
-            m_shipStreak->m_fields.isCutting = false;  // Reset to visible state
-        }
-
-        PlayerObject::resetStreak(); // Call original
+        CCMotionStreak::update(delta);
     }
 };
