@@ -1,38 +1,59 @@
 #include <Geode/Geode.hpp>
 #include <Geode/modify/CCMotionStreak.hpp>
+#include <Geode/modify/PlayerObject.hpp>
 
 using namespace geode::prelude;
 
 class $modify (CCMotionStreak)
 {
     struct Fields {
-        float elapsedTime = 0.0f;    // Tracks the elapsed time
-        float cutInterval = 0.2f;    // Interval for the trail cutting (default: 0.2s)
-        bool isCutting = false;      // Indicates whether the trail is currently being cut
+        float elapsedTime = 0.0f;
+        float cutInterval = 0.2f;
+        bool isCutting = false;
+        bool trailActive = false; // To track if the trail is currently active
     };
 
     virtual void update(float delta)
     {
-        // Only start cutting if the trail exists (i.e., m_bStroke is true)
-        if (this->m_bStroke) {
-            // Increment the timer only when the trail is present
+        if (m_fields->trailActive) {
             m_fields->elapsedTime += delta;
 
             if (m_fields->elapsedTime >= m_fields->cutInterval) {
-                m_fields->elapsedTime -= m_fields->cutInterval; // Reset the timer
+                m_fields->elapsedTime -= m_fields->cutInterval;
 
-                // Toggle cutting state
                 if (m_fields->isCutting) {
-                    this->stopStroke(); // Temporarily stops the trail
+                    this->stopStroke(); // Resume trail
                 } else {
-                    this->resumeStroke(); // Resumes the trail
+                    this->resumeStroke(); // Stop trail for a bit
                 }
 
-                m_fields->isCutting = !m_fields->isCutting; // Flip the state
+                m_fields->isCutting = !m_fields->isCutting; // Flip state
             }
         }
 
-        // Update the trail's behavior, applying the delta time
         CCMotionStreak::update(delta);
+    }
+};
+
+class $modify (PlayerObject)
+{
+    struct Fields {
+        CCMotionStreak* m_streak; // Assuming this points to the current streak object
+    };
+
+    void activateStreak()
+    {
+        PlayerObject::activateStreak(); // Call original method
+        if (m_fields->m_streak) {
+            m_fields->m_streak->m_fields->trailActive = true; // Enable cutting effect
+        }
+    }
+
+    void resetStreak()
+    {
+        PlayerObject::resetStreak(); // Call original method
+        if (m_fields->m_streak) {
+            m_fields->m_streak->m_fields->trailActive = false; // Disable cutting effect
+        }
     }
 };
