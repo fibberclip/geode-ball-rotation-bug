@@ -30,7 +30,6 @@ class $modify(CCMotionStreak) {
             m_fields->elapsedTime -= m_fields->cutInterval;
 
             // Perform cutting logic only when the trail is visible
-            if (player->m_regularTrail->isVisible()) {
                 if (m_fields->isCutting) {
                     this->stopStroke();
                 } else {
@@ -38,7 +37,6 @@ class $modify(CCMotionStreak) {
                 }
 
                 m_fields->isCutting = !m_fields->isCutting;
-            }
         }
 
         CCMotionStreak::update(delta);
