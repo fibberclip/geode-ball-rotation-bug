@@ -1,20 +1,35 @@
 #include <Geode/Geode.hpp>
 #include <Geode/modify/CCMotionStreak.hpp>
+#include <Geode/modify/PlayerObject.hpp>
 
 using namespace geode::prelude;
 
+// Intercept PlayerObject to track streak activation
+class $modify (PlayerObject) {
+    struct Fields {
+        bool isTrailActive = false; // Tracks whether the trail is active
+    };
+
+    void activateStreak(bool active) {
+        m_fields->isTrailActive = active; // Track the active state
+        PlayerObject::activateStreak(active); // Call the original method
+    }
+};
+
+// Modify CCMotionStreak to apply trail cutting
 class $modify (CCMotionStreak)
 {
     struct Fields {
         float elapsedTime = 0.0f;    // Tracks the elapsed time
-        float cutInterval = 0.15f;    // Interval for the trail cutting (default: 0.4s)
+        float cutInterval = 0.4f;    // Interval for the trail cutting (default: 0.4s)
         bool isCutting = false;      // Indicates whether the trail is currently being cut
     };
 
     virtual void update(float delta)
     {
-        // Check if the trail is currently visible or active before applying the cutting logic
-        if (!this->isActive()) {
+        // Get the PlayerObject and check if the trail is active
+        auto player = reinterpret_cast<PlayerObject*>(this->getParent()); // Get the parent object
+        if (!player || !player->m_fields->isTrailActive) {
             CCMotionStreak::update(delta);
             return;
         }
