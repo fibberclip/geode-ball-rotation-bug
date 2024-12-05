@@ -19,6 +19,7 @@ class $modify(CCMotionStreak) {
         }
 
         auto player = static_cast<PlayerObject*>(parent);
+        auto myself = player->m_regularTrail;
         if (!player->m_regularTrail) {
             CCMotionStreak::update(delta);
             return;
@@ -31,9 +32,9 @@ class $modify(CCMotionStreak) {
 
             // Perform cutting logic only when the trail is visible
                 if (m_fields->isCutting) {
-                    m_regularTrail->stopStroke();
+                    myself->stopStroke();
                 } else {
-                    m_regularTrail->resumeStroke();
+                    myself->resumeStroke();
                 }
 
                 m_fields->isCutting = !m_fields->isCutting;
