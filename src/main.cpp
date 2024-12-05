@@ -30,11 +30,6 @@ class $modify (CCMotionStreak)
 
         // Update the trail's behavior, applying the delta time
         CCMotionStreak::update(delta);
-
-        // If not cutting, ensure we continue to add points
-        if (!m_fields->isCutting) {
-            this->addPoint(this->getPosition()); // Add current position to the trail
-        }
     }
 
     bool isDrawing() {
