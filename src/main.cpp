@@ -14,14 +14,19 @@ class $modify (CCMotionStreak)
         static std::uniform_int_distribution<> dis(0, 100); // Frequency range (0-100%)
 
         int randChance = dis(gen);
-        if (randChance < 75) {  // 5% chance for bug to occur (can adjust for frequency)
-            // Apply a "cut" effect, simulating the bug (e.g., stop rendering the trail for a short time)
-            this->setVisible(false);
+        
+        // Customizable chance for the bug to happen (75% here as per your request)
+        bool isCutting = randChance < 75; 
+
+        if (isCutting) {
+            // Stop emitting the trail (cutting effect)
+            this->setDrawState(false); // stop drawing the trail
         } else {
-            this->setVisible(true);
+            // Resume emitting the trail
+            this->setDrawState(true); // resume drawing the trail
         }
 
-        // Call original update function with delta adjusted for gameplay speed
+        // Update the trail's behavior, applying the delta time, which controls its appearance
         CCMotionStreak::update(delta);
     }
 };
