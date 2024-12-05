@@ -7,57 +7,49 @@ class $modify(CCMotionStreak)
 {
     struct Fields {
         float elapsedTime = 0.0f;    // Tracks the elapsed time
-        float cutInterval = 0.2f;    // Interval for the trail cutting (default: 0.2s)
-        bool isCutting = false;      // Indicates whether the trail is currently being cut
+        float cutInterval = 0.2f;    // Interval for the trail cutting
+        bool isCutting = false;      // Indicates whether cutting is active
     };
 
     virtual void update(float delta) {
-        // Call the base update first to ensure proper fading behavior
+        // Call base class update to ensure normal trail functionality
         CCMotionStreak::update(delta);
 
-        // Check if the trail is currently active
+        // Ensure trail is active before applying custom logic
         if (m_uNuPoints > 0 && m_bStroke) {
-            // Update elapsed time
             m_fields->elapsedTime += delta;
 
             if (m_fields->elapsedTime >= m_fields->cutInterval) {
                 m_fields->elapsedTime -= m_fields->cutInterval; // Reset the timer
 
-                // Toggle cutting state
+                // Toggle cutting without disrupting internal rendering states
                 if (m_fields->isCutting) {
-                    this->resumeStroke(); // Resume the trail
+                    m_pPointState = 1.0f; // Allow points to render normally
                 } else {
-                    this->stopStroke(); // Stop the trail temporarily
+                    m_pPointState = 0.0f; // Hide points temporarily
                 }
 
-                m_fields->isCutting = !m_fields->isCutting; // Flip the state
+                m_fields->isCutting = !m_fields->isCutting; // Flip cutting state
+
+                // Debugging: Log trail cutting state
+                CCLOG("Trail Cutting State: %s, NuPoints: %u", 
+                    m_fields->isCutting ? "OFF" : "ON", m_uNuPoints);
             }
         } else {
-            // Reset cutting state if trail isn't active
+            // Reset cutting state when trail is inactive
             if (m_fields->isCutting) {
-                this->resumeStroke();
+                m_pPointState = 1.0f; // Ensure points render normally
                 m_fields->isCutting = false;
             }
         }
-
-        // Ensure fading behavior is retained
-        if (m_uNuPoints > 0 && m_pPointState > 0.0f) {
-            for (uint i = 0; i < m_uNuPoints; i++) {
-                // Adjust point alpha based on distance (or fade logic)
-                float alpha = calculateFadeAlpha(i);
-                // Apply the fade (assuming there's a method or field for alpha)
-                this->setPointAlpha(i, alpha);
-            }
-        }
     }
 
-    float calculateFadeAlpha(uint pointIndex) {
-        // Example fade calculation: decrease alpha based on distance from player
-        return 1.0f - (static_cast<float>(pointIndex) / static_cast<float>(m_uMaxPoints));
-    }
+    virtual void draw() override {
+        // Debugging: Log internal state
+        CCLOG("Draw Call - Stroke: %d, NuPoints: %u, PointState: %f", 
+            m_bStroke, m_uNuPoints, m_pPointState);
 
-    void setPointAlpha(uint pointIndex, float alpha) {
-        // Implement logic to set alpha for the point if needed
-        // You may need to adjust this to match the actual GD API
+        // Call base draw method to ensure fade effect remains
+        CCMotionStreak::draw();
     }
 };
