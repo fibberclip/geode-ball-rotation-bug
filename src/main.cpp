@@ -1,6 +1,5 @@
 #include <Geode/Geode.hpp>
 #include <Geode/modify/CCMotionStreak.hpp>
-#include <Geode/console.hpp>
 
 using namespace geode::prelude;
 
