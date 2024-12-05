@@ -31,9 +31,9 @@ class $modify(CCMotionStreak) {
 
             // Perform cutting logic only when the trail is visible
                 if (m_fields->isCutting) {
-                    this->stopStroke();
+                    m_regularTrail->stopStroke();
                 } else {
-                    this->resumeStroke();
+                    m_regularTrail->resumeStroke();
                 }
 
                 m_fields->isCutting = !m_fields->isCutting;
