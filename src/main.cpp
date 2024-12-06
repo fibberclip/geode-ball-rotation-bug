@@ -5,26 +5,25 @@
 
 using namespace geode::prelude;
 
-// Static map to associate CCMotionStreak instances with their states
+// Static map to track streak activity
 static std::unordered_map<CCMotionStreak*, bool> streakStates;
 
 class $modify(CCMotionStreak) {
     struct Fields {
         float elapsedTime = 0.0f;
-        float cutInterval = 0.15f;
+        float cutInterval = 0.2f;
         bool isCutting = false;
     };
 
     virtual void update(float delta) {
-        // Check if this streak is active
         if (streakStates[this]) {
+            // Cutting effect logic
             m_fields->elapsedTime += delta;
 
             if (m_fields->elapsedTime >= m_fields->cutInterval) {
                 m_fields->elapsedTime -= m_fields->cutInterval;
 
                 if (m_fields->isCutting) {
-                    this->reset();
                     this->stopStroke();
                 } else {
                     this->resumeStroke();
@@ -33,8 +32,9 @@ class $modify(CCMotionStreak) {
                 m_fields->isCutting = !m_fields->isCutting;
             }
         } else {
-            // Ensure the trail is off if streakStates is false
+            // Explicitly ensure the trail is off
             this->stopStroke();
+            m_fields->isCutting = false; // Reset cutting state
         }
 
         CCMotionStreak::update(delta);
@@ -43,24 +43,26 @@ class $modify(CCMotionStreak) {
 
 class $modify(PlayerObject) {
     void activateStreak() {
-        PlayerObject::activateStreak(); // Call the original method
+        PlayerObject::activateStreak(); // Original method
 
         if (m_regularTrail) {
             auto streak = reinterpret_cast<CCMotionStreak*>(m_regularTrail);
             if (streak) {
-                streakStates[streak] = true; // Enable cutting logic
+                streakStates[streak] = true; // Activate streak
+                streak->resumeStroke();     // Ensure stroke starts correctly
             }
         }
     }
 
     void resetStreak() {
-        PlayerObject::resetStreak(); // Call the original method
+        PlayerObject::resetStreak(); // Original method
 
         if (m_regularTrail) {
             auto streak = reinterpret_cast<CCMotionStreak*>(m_regularTrail);
             if (streak) {
-                streakStates[streak] = false; // Disable cutting logic
-                streak->stopStroke();       // Explicitly stop the stroke
+                streakStates[streak] = false; // Deactivate streak
+                streak->stopStroke();        // Stop the trail
+                streak->setVisible(false);   // Ensure visibility is disabled
             }
         }
     }
