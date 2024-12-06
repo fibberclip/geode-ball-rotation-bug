@@ -5,7 +5,7 @@
 
 using namespace geode::prelude;
 
-// Static map to track streak activity
+// Static map to associate CCMotionStreak instances with their states
 static std::unordered_map<CCMotionStreak*, bool> streakStates;
 
 class $modify(CCMotionStreak) {
@@ -16,8 +16,8 @@ class $modify(CCMotionStreak) {
     };
 
     virtual void update(float delta) {
+        // Check if this streak is active
         if (streakStates[this]) {
-            // Cutting effect logic
             m_fields->elapsedTime += delta;
 
             if (m_fields->elapsedTime >= m_fields->cutInterval) {
@@ -31,10 +31,6 @@ class $modify(CCMotionStreak) {
 
                 m_fields->isCutting = !m_fields->isCutting;
             }
-        } else {
-            // Explicitly ensure the trail is off
-            this->stopStroke();
-            m_fields->isCutting = false; // Reset cutting state
         }
 
         CCMotionStreak::update(delta);
@@ -43,26 +39,23 @@ class $modify(CCMotionStreak) {
 
 class $modify(PlayerObject) {
     void activateStreak() {
-        PlayerObject::activateStreak(); // Original method
+        PlayerObject::activateStreak(); // Call the original method
 
         if (m_regularTrail) {
             auto streak = reinterpret_cast<CCMotionStreak*>(m_regularTrail);
             if (streak) {
-                streakStates[streak] = true; // Activate streak
-                streak->resumeStroke();     // Ensure stroke starts correctly
+                streakStates[streak] = true; // Enable cutting logic
             }
         }
     }
 
     void resetStreak() {
-        PlayerObject::resetStreak(); // Original method
+        PlayerObject::resetStreak(); // Call the original method
 
-        if (m_regularTrail) {
+        if (!m_regularTrail) {
             auto streak = reinterpret_cast<CCMotionStreak*>(m_regularTrail);
             if (streak) {
-                streakStates[streak] = false; // Deactivate streak
-                streak->stopStroke();        // Stop the trail
-                streak->setVisible(false);   // Ensure visibility is disabled
+                streakStates[streak] = false; // Disable cutting logic
             }
         }
     }
