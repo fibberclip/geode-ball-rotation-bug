@@ -7,11 +7,13 @@ using namespace geode::prelude;
 
 // Static map to associate CCMotionStreak instances with their states
 static std::unordered_map<CCMotionStreak*, bool> streakStates;
+auto cuttingMode = Mod::get()->getSettingValue<std::string>("cutting-mode");
+auto cutFreq = Mod::get()->getSettingValue<int64_t>("cutting-freq");
 
 class $modify(CCMotionStreak) {
     struct Fields {
         float elapsedTime = 0.0f;
-        float cutInterval = 0.2f;
+        float cutInterval = cutFreqf;
         bool isCutting = false;
     };
 
@@ -24,7 +26,7 @@ class $modify(CCMotionStreak) {
                 m_fields->elapsedTime -= m_fields->cutInterval;
 
                 if (m_fields->isCutting) {
-                    this->stopStroke();
+                    this->cuttingMode();
                 } else {
                     this->resumeStroke();
                 }
