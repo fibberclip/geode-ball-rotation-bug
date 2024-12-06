@@ -1,10 +1,8 @@
-// THIS ONE STARTS THE TRAIL NORMALLY
-// WE BALL
-
 #include <Geode/Geode.hpp>
 #include <Geode/modify/PlayerObject.hpp>
 #include <Geode/modify/CCMotionStreak.hpp>
 #include <unordered_map>
+#include <iostream>
 
 using namespace geode::prelude;
 
@@ -23,8 +21,12 @@ class $modify(CCMotionStreak) {
         if (streakStates[this]) {
             m_fields->elapsedTime += delta;
 
+            // Log for debugging
+
             if (m_fields->elapsedTime >= m_fields->cutInterval) {
                 m_fields->elapsedTime -= m_fields->cutInterval;
+
+                // Log cutting state
 
                 if (m_fields->isCutting) {
                     this->stopStroke();
@@ -36,7 +38,9 @@ class $modify(CCMotionStreak) {
             }
         } else {
             // Ensure the trail is stopped when state is false
-            this->stopStroke();
+            if (this->isActive()) {
+                this->stopStroke();
+            }
         }
 
         CCMotionStreak::update(delta);
