@@ -11,7 +11,7 @@ static std::unordered_map<CCMotionStreak*, bool> streakStates;
 class $modify(CCMotionStreak) {
     struct Fields {
         float elapsedTime = 0.0f;
-        float cutInterval = 0.2f;
+        float cutInterval = 0.15f;
         bool isCutting = false;
     };
 
@@ -24,6 +24,7 @@ class $modify(CCMotionStreak) {
                 m_fields->elapsedTime -= m_fields->cutInterval;
 
                 if (m_fields->isCutting) {
+                    this->reset();
                     this->stopStroke();
                 } else {
                     this->resumeStroke();
