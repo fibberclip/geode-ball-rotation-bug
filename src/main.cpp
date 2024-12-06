@@ -13,7 +13,7 @@ auto cutFreq = Mod::get()->getSettingValue<int64_t>("cutting-freq");
 class $modify(CCMotionStreak) {
     struct Fields {
         float elapsedTime = 0.0f;
-        float cutInterval = cutFreqf;
+        float cutInterval = cutFreq;
         bool isCutting = false;
     };
 
@@ -26,7 +26,7 @@ class $modify(CCMotionStreak) {
                 m_fields->elapsedTime -= m_fields->cutInterval;
 
                 if (m_fields->isCutting) {
-                    this->cuttingMode();
+                    this->stopStroke();
                 } else {
                     this->resumeStroke();
                 }
