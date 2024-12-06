@@ -1,13 +1,5 @@
-# Standalone Ball Rotation Bug
+# Fool's Trail Cutting
 
-## Credits
-- TheSillyDoggo: Literally made the whole thing as part of their [QOLMod](https://github.com/TheSillyDoggo/GeodeMenu) mod menu.
-- NyteLytee: Base mod i took and edited. - [Wave Trail Drag Fix](https://github.com/nytelytee/geode-wave-trail-drag-fix)
+Mod that **ATTEMPTS** to *RECREATE* the Trail Cutting effect from versions 2.1 and prior that occurred when playing on high FPS values. Instead of relying on FPS, this mod relies on a configurable frequency value, which will define how much time passes in-between each trail cut.
 
-### [Get QOLMod](https://geode-sdk.org/mods/thesillydoggo.qolmod)
-
-# What it does
-![epicexample](saritahhh.ball_bug/epicexample.png)
-
-# Disclaimer
-This thing is for **PERSONAL USE ONLY** as pretty much nothing in this was made by me. I decided to make this so i could have the Ball Rotation Bug feature from QOLMod in a standalone mod so i don't have to keep yet ANOTHER full mod menu installed for a single feature. I take absolutely no credit for anything this mod does. Needless to say this mod is not getting published **ANYWHERE** so in case you're dumb enough to ask me to upload this to the index or something like that, know in advance i ***OBVIOUSLY WON'T.***
+This is my first ever Geode mod, so it's definitely nowhere near perfect and it's surely not the best way to replicate this visual, but it's there as a cheap alternative for those that want it and either can't use another option or play on Android, where it's normally not accessible.
