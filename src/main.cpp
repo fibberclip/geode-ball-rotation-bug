@@ -5,7 +5,7 @@
 
 using namespace geode::prelude;
 
-// Static map to associate CCMotionStreak instances with their states
+// Static map to track streak activity
 static std::unordered_map<CCMotionStreak*, bool> streakStates;
 
 class $modify(CCMotionStreak) {
@@ -16,8 +16,8 @@ class $modify(CCMotionStreak) {
     };
 
     virtual void update(float delta) {
-        // Check if this streak is active
         if (streakStates[this]) {
+            // Cutting effect logic
             m_fields->elapsedTime += delta;
 
             if (m_fields->elapsedTime >= m_fields->cutInterval) {
@@ -31,6 +31,11 @@ class $modify(CCMotionStreak) {
 
                 m_fields->isCutting = !m_fields->isCutting;
             }
+        } else {
+            // Ensure the trail stops and isn't visible when not active
+            this->stopStroke();
+            m_fields->isCutting = false; // Reset cutting state
+            this->setVisible(false); // Hide trail
         }
 
         CCMotionStreak::update(delta);
@@ -44,7 +49,9 @@ class $modify(PlayerObject) {
         if (m_regularTrail) {
             auto streak = reinterpret_cast<CCMotionStreak*>(m_regularTrail);
             if (streak) {
-                streakStates[streak] = true; // Enable cutting logic
+                streakStates[streak] = true; // Activate streak
+                streak->resumeStroke();      // Start cutting effect
+                streak->setVisible(true);    // Ensure the trail is visible
             }
         }
     }
@@ -52,10 +59,12 @@ class $modify(PlayerObject) {
     void resetStreak() {
         PlayerObject::resetStreak(); // Call the original method
 
-        if (!m_regularTrail) {
+        if (m_regularTrail) {
             auto streak = reinterpret_cast<CCMotionStreak*>(m_regularTrail);
             if (streak) {
-                streakStates[streak] = false; // Disable cutting logic
+                streakStates[streak] = false; // Deactivate streak
+                streak->stopStroke();         // Stop cutting effect
+                streak->setVisible(false);    // Ensure the trail is hidden
             }
         }
     }
