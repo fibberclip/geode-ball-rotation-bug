@@ -7,8 +7,7 @@
 using namespace geode::prelude;
 
 $execute {
-    listenForSettingChanges("cutting-freq", [](double value) {
-        auto cutFreq = Mod::get()->getSettingValue<double>("cutting-freq");
+    listenForSettingChanges("cutting-freq", [](double cutFreq) {
     });
 }
 
