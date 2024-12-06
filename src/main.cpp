@@ -1,49 +1,30 @@
 #include <Geode/Geode.hpp>
 #include <Geode/modify/PlayerObject.hpp>
 #include <Geode/modify/CCMotionStreak.hpp>
-#include <Geode/loader/SettingV3.hpp>
 #include <unordered_map>
 
 using namespace geode::prelude;
 
+// Static map to associate CCMotionStreak instances with their states
 static std::unordered_map<CCMotionStreak*, bool> streakStates;
-
-static double cutFreq = 0.2; 
-static std::string cuttingMode = "stopStroke"; 
-
-$execute {
-    listenForSettingChanges("cutting-freq", [](double value) {
-        cutFreq = value; 
-        CCLOG("Cutting Frequency updated: %f", cutFreq);
-    });
-
-    listenForSettingChanges("cutting-mode", [](std::string value) {
-        cuttingMode = value; 
-        CCLOG("Cutting Mode updated: %s", cuttingMode.c_str());
-    });
-}
 
 class $modify(CCMotionStreak) {
     struct Fields {
         float elapsedTime = 0.0f;
+        float cutInterval = 0.2f;
         bool isCutting = false;
     };
 
     virtual void update(float delta) {
-
+        // If this streak is active for cutting logic
         if (streakStates[this]) {
             m_fields->elapsedTime += delta;
 
-            if (m_fields->elapsedTime >= cutFreq) { 
-                m_fields->elapsedTime -= cutFreq;
+            if (m_fields->elapsedTime >= m_fields->cutInterval) {
+                m_fields->elapsedTime -= m_fields->cutInterval;
 
                 if (m_fields->isCutting) {
-
-                    if (cuttingMode == "stopStroke") {
-                        this->stopStroke();
-                    } else if (cuttingMode == "reset") {
-                        this->reset();
-                    }
+                    this->stopStroke();
                 } else {
                     this->resumeStroke();
                 }
@@ -63,7 +44,7 @@ class $modify(PlayerObject) {
         if (m_regularTrail) {
             auto streak = reinterpret_cast<CCMotionStreak*>(m_regularTrail);
             if (streak) {
-                streakStates[streak] = true; 
+                streakStates[streak] = true; // Activate trail cutting
             }
         }
     }
@@ -74,7 +55,38 @@ class $modify(PlayerObject) {
         if (m_regularTrail) {
             auto streak = reinterpret_cast<CCMotionStreak*>(m_regularTrail);
             if (streak) {
-                streakStates[streak] = false; 
+                streakStates[streak] = false; // Deactivate trail cutting
+            }
+        }
+    }
+
+    void update(float delta) {
+        PlayerObject::update(delta);
+
+        // Determine mode and ground status
+        bool isAirMode = m_isShip || m_isSwing || m_isDart;  // Air gamemodes
+        bool isGroundMode = !isAirMode;                     // Non-air gamemodes
+        bool onGround = m_isOnGround || m_hasGroundParticles;
+
+        if (isGroundMode) {
+            if (onGround) {
+                // Disable trail (and cutting) when on the ground
+                if (m_regularTrail) {
+                    auto streak = reinterpret_cast<CCMotionStreak*>(m_regularTrail);
+                    if (streak) {
+                        streakStates[streak] = false; // Deactivate cutting
+                    }
+                }
+            } 
+            // Trail cutting should only exist when activateStreak() explicitly triggers it
+            // No action needed for being airborne alone
+        } else if (isAirMode) {
+            // Air gamemodes: Always enable trail cutting
+            if (m_regularTrail) {
+                auto streak = reinterpret_cast<CCMotionStreak*>(m_regularTrail);
+                if (streak) {
+                    streakStates[streak] = true; // Enable cutting logic
+                }
             }
         }
     }
