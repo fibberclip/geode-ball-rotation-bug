@@ -31,6 +31,9 @@ class $modify(CCMotionStreak) {
 
                 m_fields->isCutting = !m_fields->isCutting;
             }
+        } else {
+            // Ensure the trail is off if streakStates is false
+            this->stopStroke();
         }
 
         CCMotionStreak::update(delta);
@@ -56,6 +59,7 @@ class $modify(PlayerObject) {
             auto streak = reinterpret_cast<CCMotionStreak*>(m_regularTrail);
             if (streak) {
                 streakStates[streak] = false; // Disable cutting logic
+                streak->stopStroke();       // Explicitly stop the stroke
             }
         }
     }
