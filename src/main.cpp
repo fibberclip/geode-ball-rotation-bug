@@ -64,27 +64,33 @@ class $modify(PlayerObject) {
         // Call the original bumpPlayer functionality
         PlayerObject::bumpPlayer(p0, p1, p2, p3);
 
-        // Trigger the trail logic
-        this->activateStreak();
+        // Trigger the trail logic if in an air mode
+        if (!this->m_isOnGround && !this->m_isOnGround2 && !this->m_isOnGround3 && !this->m_isOnGround4) {
+            this->activateStreak();
+        }
     }
 
     void flipGravity(bool p0, bool p1) {
         // Call the original flipGravity functionality
         PlayerObject::flipGravity(p0, p1);
 
-        // Trigger the trail logic
-        this->activateStreak();
+        // Trigger the trail logic if in an air mode
+        if (!this->m_isOnGround && !this->m_isOnGround2 && !this->m_isOnGround3 && !this->m_isOnGround4) {
+            this->activateStreak();
+        }
     }
 
     void activateStreak() {
         // Call the original activateStreak method
         PlayerObject::activateStreak();
 
-        // Custom logic for enabling trail cutting
+        // Ensure trail cutting is only enabled in appropriate situations
         if (m_regularTrail) {
             auto streak = reinterpret_cast<CCMotionStreak*>(m_regularTrail);
-            if (streak) {
-                streakStates[streak] = true; // Activate trail cutting
+
+            // Activate trail cutting only for valid air modes
+            if (streak && (m_isShip || m_isDart || m_isSwing)) {
+                streakStates[streak] = true; // Enable trail cutting
             }
         }
     }
@@ -93,11 +99,11 @@ class $modify(PlayerObject) {
         // Call the original resetStreak method
         PlayerObject::resetStreak();
 
-        // Custom logic for disabling trail cutting
+        // Ensure trail cutting is disabled when the streak is reset
         if (m_regularTrail) {
             auto streak = reinterpret_cast<CCMotionStreak*>(m_regularTrail);
             if (streak) {
-                streakStates[streak] = false; // Deactivate trail cutting
+                streakStates[streak] = false; // Disable trail cutting
             }
         }
     }
