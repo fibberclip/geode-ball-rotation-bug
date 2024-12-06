@@ -34,8 +34,7 @@ class $modify(CCMotionStreak) {
                 m_fields->isCutting = !m_fields->isCutting; // Toggle state
                 cuttingStates[this] = m_fields->isCutting; // Update cutting state
             }
-        }
-        else {
+        } else {
             // If the streak is inactive, stop the stroke and hide the trail
             this->stopStroke();
             m_fields->isCutting = false; // Reset cutting state
@@ -72,6 +71,32 @@ class $modify(PlayerObject) {
                 cuttingStates[streak] = false; // Reset cutting state
                 streak->stopStroke();         // Stop cutting effect
                 streak->setVisible(false);    // Hide the trail
+            }
+        }
+    }
+
+    void update() {
+        PlayerObject::update(); // Call the original update function
+
+        // Disable cutting effect when on the ground with certain gamemodes
+        if ((m_isBall || m_isRobot || m_isSpider) && m_isOnGround) {
+            // Disable cutting if on the ground and in a ground-based gamemode
+            if (m_regularTrail) {
+                auto streak = reinterpret_cast<CCMotionStreak*>(m_regularTrail);
+                if (streak && cuttingStates[streak]) {
+                    streak->stopStroke(); // Disable cutting
+                    cuttingStates[streak] = false;
+                }
+            }
+        }
+        else {
+            // Allow cutting effect when in the air or non-ground gamemodes
+            if (m_regularTrail) {
+                auto streak = reinterpret_cast<CCMotionStreak*>(m_regularTrail);
+                if (streak && !cuttingStates[streak]) {
+                    streak->resumeStroke(); // Enable cutting again if conditions are met
+                    cuttingStates[streak] = true;
+                }
             }
         }
     }
