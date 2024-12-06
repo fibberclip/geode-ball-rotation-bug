@@ -1,7 +1,6 @@
 #include <Geode/Geode.hpp>
 #include <Geode/modify/PlayerObject.hpp>
 #include <Geode/modify/CCMotionStreak.hpp>
-#include <Geode/loader/SettingV3.hpp>
 #include <unordered_map>
 
 using namespace geode::prelude;
@@ -9,20 +8,10 @@ using namespace geode::prelude;
 // Static map to associate CCMotionStreak instances with their states
 static std::unordered_map<CCMotionStreak*, bool> streakStates;
 
-// Global settings for cutting frequency and mode
-static double cutFreq = 0.2; // Default frequency
-
-// Listen for changes to settings at mod load time
-$execute {
-    listenForSettingChanges("cutting-freq", [](double value) {
-        cutFreq = value; // Update frequency dynamically
-        CCLOG("Cutting Frequency updated: %f", cutFreq);
-    });
-}
-
 class $modify(CCMotionStreak) {
     struct Fields {
         float elapsedTime = 0.0f;
+        float cutInterval = 0.15f;
         bool isCutting = false;
     };
 
@@ -31,8 +20,8 @@ class $modify(CCMotionStreak) {
         if (streakStates[this]) {
             m_fields->elapsedTime += delta;
 
-            if (m_fields->elapsedTime >= cutFreq) { // Use dynamic frequency
-                m_fields->elapsedTime -= cutFreq;
+            if (m_fields->elapsedTime >= m_fields->cutInterval) {
+                m_fields->elapsedTime -= m_fields->cutInterval;
 
                 if (m_fields->isCutting) {
                     this->stopStroke();
