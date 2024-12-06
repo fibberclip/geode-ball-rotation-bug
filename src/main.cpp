@@ -75,8 +75,8 @@ class $modify(PlayerObject) {
         }
     }
 
-    void update() {
-        PlayerObject::update(); // Call the original update function
+    void update(float p0) {
+        PlayerObject::update(p0); // Call the original update function
 
         // Disable cutting effect when on the ground with certain gamemodes
         if ((m_isBall || m_isRobot || m_isSpider) && m_isOnGround) {
