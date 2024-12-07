@@ -64,7 +64,7 @@ class $modify(PlayerObject) {
         PlayerObject::update(delta);
 
         // Determine mode and ground status
-        bool isAirMode = m_isShip || m_isSwing || m_isDart;  // Air gamemodes
+        bool isAirMode = m_isShip || m_isSwing || m_isDart || m_isBird;  // Air gamemodes
         bool isGroundMode = !isAirMode;                     // Non-air gamemodes
         bool onGround = m_isOnGround || m_hasGroundParticles;
 
