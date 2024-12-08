@@ -48,18 +48,6 @@ class $modify(CCMotionStreak) {
 };
 
 class $modify(PlayerObject) {
-
-    void bumpPlayer(float p0, int p1, bool p2, GameObject* p3) {
-        // Call the original bumpPlayer functionality
-        PlayerObject::bumpPlayer(p0, p1, p2, p3);
-
-        if (m_regularTrail) {
-            auto streak = reinterpret_cast<CCMotionStreak*>(m_regularTrail);
-            if (streak) {
-                streakStates[streak] = true; // Activate trail cutting
-            }
-        }
-    }
     
     void activateStreak() {
         PlayerObject::activateStreak();
