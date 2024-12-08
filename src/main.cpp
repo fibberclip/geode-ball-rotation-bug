@@ -53,8 +53,12 @@ class $modify(PlayerObject) {
         // Call the original bumpPlayer functionality
         PlayerObject::bumpPlayer(p0, p1, p2, p3);
 
-        // Trigger the trail logic
-        this->activateStreak();
+        if (m_regularTrail) {
+            auto streak = reinterpret_cast<CCMotionStreak*>(m_regularTrail);
+            if (streak) {
+                streakStates[streak] = true; // Activate trail cutting
+            }
+        }
     }
     
     void activateStreak() {
