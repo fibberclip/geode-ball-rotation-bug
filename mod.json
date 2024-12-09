@@ -18,13 +18,6 @@
       "arrows": true,
       "arrow-step": 0.05,
       "slider": false
-    },
-    "cutting-mode": {
-      "type": "string",
-      "name": "Cutting Mode",
-      "description": "Defines the cutting mode. stopStroke is more loyal to the original visual, while reset causes a more sudden and abrupt cut.",
-      "default": "stopStroke",
-      "one-of": ["stopStroke", "reset"]
     }
   },
   "tags": ["offline", "gameplay", "customization"]
