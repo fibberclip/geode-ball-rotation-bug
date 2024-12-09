@@ -71,32 +71,31 @@ class $modify(PlayerObject) {
         }
     }
 
+    bool isGroundMode() const {
+        // Helper function to check if the player is in a ground gamemode
+        return !(m_isShip || m_isSwing || m_isDart || m_isBird);
+    }
+
     void update(float delta) {
         PlayerObject::update(delta);
 
-        // Determine mode and ground status
-        bool isAirMode = m_isShip || m_isSwing || m_isDart || m_isBird;  // Air gamemodes
-        bool isGroundMode = !isAirMode;                     // Non-air gamemodes
-        bool onGround = m_isOnGround || m_hasGroundParticles;
-
-        if (isGroundMode) {
-            if (onGround) {
-                // Disable trail (and cutting) when on the ground
+        // Update cutting logic based on current state
+        if (isGroundMode()) {
+            if (m_hasGroundParticles || m_isOnGround || m_isOnGround2 || m_isOnGround3 || m_isOnGround4) {
+                // Disable cutting if ground mode and on the ground
                 if (m_regularTrail) {
                     auto streak = reinterpret_cast<CCMotionStreak*>(m_regularTrail);
                     if (streak) {
-                        streakStates[streak] = false; // Deactivate cutting
+                        streakStates[streak] = false;
                     }
                 }
-            } 
-            // Trail cutting should only exist when activateStreak() explicitly triggers it
-            // No action needed for being airborne alone
-        } else if (isAirMode) {
-            // Air gamemodes: Always enable trail cutting
+            }
+        } else {
+            // Always enable cutting for air gamemodes
             if (m_regularTrail) {
                 auto streak = reinterpret_cast<CCMotionStreak*>(m_regularTrail);
                 if (streak) {
-                    streakStates[streak] = true; // Enable cutting logic
+                    streakStates[streak] = true;
                 }
             }
         }
